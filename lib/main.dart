@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutterpad/screens/login.dart';
+import 'package:flutterpad/screens/login_screen.dart';
 
 void main() {
   runApp(

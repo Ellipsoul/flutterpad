@@ -21,7 +21,7 @@ authRouter.post("/api/signup", jsonParser, async (req, res) => {
     }
     res.json({ user }) // Sets the response in json format
   } catch (err) {
-    console.log(err)
+    res.status(500).json({ error: err.message })
   }
 })
 

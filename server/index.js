@@ -1,5 +1,6 @@
 const express = require("express")
 const mongoose = require("mongoose")
+const cors = require("cors")
 const authRouter = require("./routes/auth")
 
 // Default to port 3001 when developing locally
@@ -9,8 +10,9 @@ const DB =
 
 const app = express() // Initialise express app
 
-app.use(authRouter)
+app.use(cors()) // Initialise necessary CORS policy
 app.use(express.json())
+app.use(authRouter)
 
 // Connect to MongoDB
 mongoose
