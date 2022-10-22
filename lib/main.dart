@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterpad/screens/login.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    // Stores the state of all providers in the app
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
