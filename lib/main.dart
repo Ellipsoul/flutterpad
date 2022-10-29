@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterpad/repository/auth_repository.dart';
+import 'package:flutterpad/router.dart';
 import 'package:flutterpad/screens/home_screen.dart';
 import 'package:flutterpad/screens/login_screen.dart';
+import 'package:routemaster/routemaster.dart';
 
 import 'repository/models/error_model.dart';
 
@@ -41,15 +43,21 @@ class _MyAppState extends ConsumerState<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
-
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // Conditionally render the home screen once the user has logged in
-      home: user == null ? const LoginScreen() : const HomeScreen(),
+      // Assigns available route depending on user's logged in state
+      routerDelegate: RoutemasterDelegate(routesBuilder: (context) {
+        final user = ref.watch(userProvider);
+        if (user != null && user.token.isNotEmpty) {
+          return loggedInRoute;
+        } else {
+          return loggedOutRoute;
+        }
+      }),
+      routeInformationParser: const RoutemasterParser(),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterpad/colors.dart';
 import 'package:flutterpad/repository/auth_repository.dart';
+import 'package:routemaster/routemaster.dart';
 
 import 'home_screen.dart';
 
@@ -10,15 +11,14 @@ class LoginScreen extends ConsumerWidget {
 
   void signInWithGoogle(WidgetRef ref, BuildContext context) async {
     final sMessenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
+    final navigator = Routemaster.of(context);
     // Attempt to sign in with Google
     final errorModel =
         await ref.read(authRepositoryProvider).signInWithGoogle();
     // No error -> redirect to the home page
     if (errorModel.error == null) {
       ref.read(userProvider.notifier).update((state) => errorModel.data);
-      navigator
-          .push(MaterialPageRoute(builder: (context) => const HomeScreen()));
+      navigator.replace('/');
     } else {
       // Error signing in
       sMessenger.showSnackBar(
