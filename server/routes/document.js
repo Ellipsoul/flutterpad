@@ -20,4 +20,14 @@ documentRouter.post("/doc/create", auth, async (req, res) => {
   }
 })
 
+// Route to list all documents created by a user
+documentRouter.get("/docs/me", auth, async (req, res) => {
+  try {
+    let documents = await Document.find({ uid: req.user })
+    res.json(documents)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 module.exports = documentRouter

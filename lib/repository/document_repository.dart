@@ -75,7 +75,6 @@ class DocumentRepository {
       switch (res.statusCode) {
         case 200:
           List<DocumentModel> documents = [];
-
           for (int i = 0; i < jsonDecode(res.body).length; i++) {
             documents.add(
                 DocumentModel.fromJson(jsonEncode(jsonDecode(res.body)[i])));
