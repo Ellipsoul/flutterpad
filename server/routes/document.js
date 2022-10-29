@@ -30,4 +30,25 @@ documentRouter.get("/docs/me", auth, async (req, res) => {
   }
 })
 
+// Route to update a document title
+documentRouter.post("/doc/title", auth, async (req, res) => {
+  try {
+    const { id, title } = req.body
+    const document = await Document.findByIdAndUpdate(id, { title })
+    res.json(document)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// Route to find a document by its ID
+documentRouter.get("/doc/:id", auth, async (req, res) => {
+  try {
+    const document = await Document.findById(req.params.id)
+    res.json(document)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
 module.exports = documentRouter

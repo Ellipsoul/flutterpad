@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterpad/colors.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutterpad/repository/auth_repository.dart';
+import 'package:flutterpad/repository/document_repository.dart';
+import 'package:flutterpad/repository/models/document_model.dart';
+import 'package:flutterpad/repository/models/error_model.dart';
 
 // Screen for editing a document
 class DocumentScreen extends ConsumerStatefulWidget {
@@ -20,11 +24,40 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
   TextEditingController titleController =
       TextEditingController(text: "Untitled Document");
   final quill.QuillController _controller = quill.QuillController.basic();
+  ErrorModel? errorModel;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDocumentData();
+  }
+
+  void fetchDocumentData() async {
+    errorModel = await ref.read(documentRepositoryProvider).getDocumentById(
+          ref.read(userProvider)!.token,
+          widget.id,
+        );
+
+    // Document has been correctly retrieved
+    if (errorModel!.data != null) {
+      titleController.text = (errorModel!.data as DocumentModel).title;
+      setState(() {}); // Refreshes the state
+    }
+  }
 
   @override
   void dispose() {
     super.dispose();
     titleController.dispose();
+  }
+
+  // Title update when user presses enter while editing title
+  void updateTitle(WidgetRef ref, String title) {
+    ref.read(documentRepositoryProvider).updateTitle(
+          token: ref.read(userProvider)!.token,
+          id: widget.id,
+          title: title,
+        );
   }
 
   @override
@@ -56,7 +89,7 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
               Image.asset('assets/docs-logo.png', height: 40),
               const SizedBox(width: 10),
               SizedBox(
-                width: 180,
+                width: 300,
                 child: TextField(
                   controller: titleController,
                   decoration: const InputDecoration(
@@ -66,6 +99,7 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(3))),
                     contentPadding: EdgeInsets.only(left: 10),
                   ),
+                  onSubmitted: (value) => updateTitle(ref, value),
                 ),
               ),
             ]),
