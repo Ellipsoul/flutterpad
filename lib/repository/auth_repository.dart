@@ -119,4 +119,10 @@ class AuthRepository {
     }
     return error;
   }
+
+  // Sign the user out by removing the authentication token
+  void signOut() async {
+    await _googleSignIn.signOut();
+    _localStorageRepository.setToken('');
+  }
 }
