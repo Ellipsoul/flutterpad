@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterpad/screens/document_screen.dart';
 import 'package:flutterpad/screens/home_screen.dart';
 import 'package:flutterpad/screens/login_screen.dart';
 import 'package:routemaster/routemaster.dart';
@@ -11,5 +12,8 @@ final loggedOutRoute = RouteMap(routes: {
 // Available routes when a user is logged in
 final loggedInRoute = RouteMap(routes: {
   '/': (router) => const MaterialPage(child: HomeScreen()),
-  // Add a document screen here eventually
+  // Dynamically generated route
+  '/document/:id': (router) => MaterialPage(
+        child: DocumentScreen(id: router.pathParameters['id']!),
+      )
 });

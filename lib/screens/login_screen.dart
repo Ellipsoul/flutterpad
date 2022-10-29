@@ -4,8 +4,6 @@ import 'package:flutterpad/colors.dart';
 import 'package:flutterpad/repository/auth_repository.dart';
 import 'package:routemaster/routemaster.dart';
 
-import 'home_screen.dart';
-
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
