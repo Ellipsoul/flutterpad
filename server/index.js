@@ -4,6 +4,7 @@ const cors = require("cors")
 const authRouter = require("./routes/auth")
 const documentRouter = require("./routes/document")
 const http = require("http")
+const Document = require("./models/document")
 
 // Default to port 3001 when developing locally
 // eslint-disable-next-line no-undef
@@ -42,7 +43,18 @@ io.on("connection", (socket) => {
   socket.on("typing", (data) => {
     socket.broadcast.to(data.room).emit("changes", data)
   })
+
+  // Handles a data save to MongoDB
+  socket.on("save", (data) => {
+    saveData(data)
+  })
 })
+
+const saveData = async (data) => {
+  let document = await Document.findById(data.room)
+  document.content = data.delta
+  document = await document.save()
+}
 
 // Run the express app
 server.listen(PORT, "0.0.0.0", () => {

@@ -16,6 +16,11 @@ class SocketRepository {
     _socketClient.emit('typing', data);
   }
 
+  // Automatically save document data to MongoDB
+  void autoSave(Map<String, dynamic> data) {
+    _socketClient.emit('save', data);
+  }
+
   // Handles changes from another connected client
   void changeListener(Function(Map<String, dynamic>) func) {
     _socketClient.on('changes', (data) => func(data));

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterpad/colors.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
@@ -8,6 +11,7 @@ import 'package:flutterpad/repository/document_repository.dart';
 import 'package:flutterpad/repository/models/document_model.dart';
 import 'package:flutterpad/repository/models/error_model.dart';
 import 'package:flutterpad/repository/socket_repository.dart';
+import 'package:routemaster/routemaster.dart';
 
 // Screen for editing a document
 class DocumentScreen extends ConsumerStatefulWidget {
@@ -42,6 +46,13 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
             quill.ChangeSource.REMOTE,
           )
         });
+
+    Timer.periodic(const Duration(seconds: 2), (timer) {
+      socketRepository.autoSave(<String, dynamic>{
+        'delta': _controller!.document.toDelta(),
+        'room': widget.id
+      });
+    });
   }
 
   void fetchDocumentData() async {
@@ -57,7 +68,7 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
           document: errorModel!.data.content.isEmpty
               ? quill.Document()
               : quill.Document.fromDelta(
-                  quill.Delta.fromJson(errorModel!.data.conttent)),
+                  quill.Delta.fromJson(errorModel!.data.content)),
           selection: const TextSelection.collapsed(offset: 0));
       setState(() {}); // Refreshes the state
     }
@@ -104,7 +115,14 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
             Padding(
               padding: const EdgeInsets.all(10),
               child: ElevatedButton.icon(
-                onPressed: (() {}),
+                onPressed: (() {
+                  Clipboard.setData(
+                    ClipboardData(
+                      text: 'http://localhost:3000/#/document/${widget.id}',
+                    ),
+                  ).then((value) => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Link Copied!'))));
+                }),
                 icon: const Icon(
                   Icons.lock,
                   size: 16,
@@ -118,7 +136,11 @@ class _DocumentScreenState extends ConsumerState<DocumentScreen> {
           title: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(children: [
-              Image.asset('assets/docs-logo.png', height: 40),
+              GestureDetector(
+                  onTap: (() {
+                    Routemaster.of(context).replace('/');
+                  }),
+                  child: Image.asset('assets/docs-logo.png', height: 40)),
               const SizedBox(width: 10),
               SizedBox(
                 width: 300,
